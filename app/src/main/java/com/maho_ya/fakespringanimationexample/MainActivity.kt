@@ -2,6 +2,7 @@ package com.maho_ya.fakespringanimationexample
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.ViewTreeObserver
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         img = findViewById<View>(R.id.springImageView)
+
+        // using DynamicAnimation
         // create scaleX and scaleY animations
         img.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -62,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // using android.view.animation
         img.setOnClickListener {
             startScaling()
         }
@@ -121,12 +125,24 @@ class MainActivity : AppCompatActivity() {
         scaleAnimation.fillAfter = true
 
 
+        Log.v("saya",scaleAnimation.hasStarted().toString())
 
+        val scaleAnimation5 = scaleAnimation(
+            0.9f, 1.0f,  100)
 
+        val scaleAnimation4 = scaleAnimation(
+            1.4f, 0.9f,  100)
+
+        setAnimationListener(scaleAnimation4, scaleAnimation5)
+        
         scaleAnimation.setAnimationListener(object : AnimationListener {
-            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationStart(animation: Animation) {
+                Log.v("saya onAnimationStart",scaleAnimation.hasStarted().toString())
+            }
             override fun onAnimationRepeat(animation: Animation) {}
             override fun onAnimationEnd(animation: Animation) {
+                Log.v("saya onAnimationEnd",scaleAnimation.hasStarted().toString())
+
                 val scaleAnimation2 = scaleAnimation(
                         2.0f, 0.8f,  100)
 
@@ -134,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                     override fun onAnimationStart(animation: Animation) {}
                     override fun onAnimationRepeat(animation: Animation) {}
                     override fun onAnimationEnd(animation: Animation) {
+                        Log.v("saya onAnimationEnd",scaleAnimation.hasEnded().toString())
                         val scaleAnimation3 = scaleAnimation(
                                 0.8f, 1.4f,  100)
 
@@ -141,22 +158,7 @@ class MainActivity : AppCompatActivity() {
                             override fun onAnimationStart(animation: Animation) {}
                             override fun onAnimationRepeat(animation: Animation) {}
                             override fun onAnimationEnd(animation: Animation) {
-                                val scaleAnimation4 = scaleAnimation(
-                                        1.4f, 0.9f,  100)
 
-
-                                scaleAnimation4.setAnimationListener(object : AnimationListener {
-                                    override fun onAnimationStart(animation: Animation) {}
-                                    override fun onAnimationRepeat(animation: Animation) {}
-                                    override fun onAnimationEnd(animation: Animation) {
-                                        val scaleAnimation5 = scaleAnimation(
-                                                0.9f, 1.0f,  100)
-
-
-
-                                        img.startAnimation(scaleAnimation5)
-                                    }
-                                })
                                 img.startAnimation(scaleAnimation4)
                             }
                         })
@@ -170,6 +172,18 @@ class MainActivity : AppCompatActivity() {
         })
         //アニメーションの開始
         img.startAnimation(scaleAnimation)
+    }
+
+    private fun setAnimationListener(scaleAnimation: ScaleAnimation, runScaleAnimation: ScaleAnimation) {
+
+        scaleAnimation.setAnimationListener(object : AnimationListener {
+            override fun onAnimationStart(animation: Animation) {}
+            override fun onAnimationRepeat(animation: Animation) {}
+            override fun onAnimationEnd(animation: Animation) {
+                img.startAnimation(runScaleAnimation)
+            }
+        })
+
     }
 
     private fun scaleAnimation(fromX: Float, toX: Float, duration: Long): ScaleAnimation {
